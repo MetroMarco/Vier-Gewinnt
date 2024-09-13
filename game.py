@@ -3,6 +3,14 @@ STONE_2 = "@"
 board_full = False
 we_have_a_winner = False
 
+def ask_players_for_turn(player_name, stone):
+    turn = int(input(player_name + " ist am Zug"))
+    if 1 <= turn <= 7:
+        print(stone + "legen")  # Lege den Stein
+    else:
+        print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
+        # Schleife von vorne starten
+
 
 # Willkommensbildschirm
 print("Herzlich Willkommen zu Vier Gewinnt")
@@ -17,19 +25,8 @@ print("Bitte lege dinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 # Spieler wird aufgefordert den Stein in Spalte 1 - 7 zu legen
 
 while not board_full and not we_have_a_winner:
-    turn_1 = int(input(player_name_1 + " ist am Zug"))
-    if 1 <= turn_1 <= 7:
-        print(STONE_1 + "legen")  # Lege den Stein
-    else:
-        print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
-        # Schleife von vorne starten
-
-    turn_2 = int(input(player_name_2 + " ist am Zug"))
-    if 1 <= turn_2 <= 7:
-        print(STONE_2 + "legen")  # Lege den Stein
-    else:
-        print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
-
+    ask_players_for_turn(player_name_1, STONE_1)
+    ask_players_for_turn(player_name_2, STONE_2)
 
 
 
