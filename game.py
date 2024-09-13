@@ -4,12 +4,14 @@ board_full = False
 we_have_a_winner = False
 
 def ask_players_for_turn(player_name, stone):
-    turn = int(input(player_name + " ist am Zug"))
-    if 1 <= turn <= 7:
-        print(stone + "legen")  # Lege den Stein
-    else:
-        print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
-        # Schleife von vorne starten
+    while True:
+        turn = int(input(player_name + " ist am Zug"))
+        if 1 <= turn <= 7:
+            print(stone + "legen")  # Lege den Stein
+            break
+        else:
+            print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
+            # Schleife von vorne starten
 
 
 # Willkommensbildschirm
