@@ -3,6 +3,19 @@ STONE_2 = "@"
 board_full = False
 we_have_a_winner = False
 
+
+def print_board():
+    print('''
+     1 2 3 4 5 6 7
+    | | | | | | | |
+    | | | | | | | |
+    | | | | | | | |
+    | | | | | | | |
+    | | | | | | | |
+    | | | | | | | |
+    ''')
+
+
 def ask_players_for_turn(player_name, stone):
     while True:
         turn = int(input(player_name + " ist am Zug"))
@@ -28,16 +41,6 @@ print("Bitte lege dinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 
 while not board_full and not we_have_a_winner:
     ask_players_for_turn(player_name_1, STONE_1)
+    print_board()
     ask_players_for_turn(player_name_2, STONE_2)
-
-
-
-play_board = print('''
- 1 2 3 4 5 6 7
-| | | | | | | |
-| | | | | | | |
-| | | | | | | |
-| | | | | | | |
-| | | | | | | |
-| | | | | | | |
-''')
+    print_board()
