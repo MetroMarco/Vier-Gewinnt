@@ -2,9 +2,10 @@ STONE_1 = "O"
 STONE_2 = "@"
 board_full = False
 we_have_a_winner = False
-play_board = [[" "] * 7 for i in range(6)]
-row = 5
-column = 0
+ROWS = 6
+COLUMNS = 7
+EMPTY_FIELD = " "
+play_board = [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)]
 
 
 def print_board():
