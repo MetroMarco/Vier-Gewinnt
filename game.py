@@ -1,3 +1,4 @@
+import logos
 STONE_1 = "O"
 STONE_2 = "@"
 board_full = False
@@ -9,6 +10,7 @@ play_board = [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)]
 
 
 def print_board():
+    print(logos.logo3)
     for r in play_board:
         print("|" + "|".join(r) + '|')
 
@@ -20,21 +22,28 @@ def place_stone(column, stone):
             row[column_index] = stone
             break
 
+# def column_is_full(column):
+#     for row in play_board[::-1]:
+#         if column[row] == 5:
+#             print(f"{column} ist voll. Bitte wähle eine andere Spalte.")
+#             break
+
+
 
 def ask_players_for_turn(player_name, stone):
     while True:
-        column = int(input(player_name + " ist am Zug"))
+        column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))            # if column != int erneute Spielerabfrage
         if 1 <= column <= 7:
             place_stone(column, stone)
+            #column_is_full(column)
             break
         else:
             print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
             # Schleife von vorne starten
-        print("\n")
-
+    print("\n" * 10)
 
 # Willkommensbildschirm
-print("Herzlich Willkommen zu Vier Gewinnt")
+print(logos.willkommen2)
 
 # Spieler werden gebeten ihre Namen einzugeben
 player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
