@@ -1,4 +1,5 @@
 import logos
+
 STONE_1 = "O"
 STONE_2 = "@"
 board_full = False
@@ -39,7 +40,7 @@ def is_board_full():
 def player_wins():
     player_name = [player_name_1, player_name_2][current_player_index]
     stone = [STONE_1, STONE_2][current_player_index]
-    for row in range(ROWS): # 4 in a row
+    for row in range(ROWS):  # 4 in a row
         for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
                     and play_board[row][column + 1] == stone
@@ -48,8 +49,8 @@ def player_wins():
                 print(f"\n  '{player_name}' wins!")
                 return True
 
-    for row in range(ROWS - 3): # 4 in a column
-        for column in range(COLUMNS ):
+    for row in range(ROWS - 3):  # 4 in a column
+        for column in range(COLUMNS):
             if (play_board[row][column] == stone
                     and play_board[row + 1][column] == stone
                     and play_board[row + 2][column] == stone
@@ -57,16 +58,16 @@ def player_wins():
                 print(f"\n  '{player_name}' wins!")
                 return True
 
-    for row in range(ROWS): # 4 x diagonal ansteigend
+    for row in range(ROWS):  # 4 x diagonal ansteigend
         for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
-                    and play_board[row - 1][column + 1] == stone        # column + 1 gibt fehler bei column 7 aus
+                    and play_board[row - 1][column + 1] == stone
                     and play_board[row - 2][column + 2] == stone
                     and play_board[row - 3][column + 3] == stone):
                 print(f"\n  '{player_name}' wins!")
                 return True
 
-    for row in range(ROWS - 3): # 4 x diagonal absteigend
+    for row in range(ROWS - 3):  # 4 x diagonal absteigend
         for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
                     and play_board[row + 1][column + 1] == stone
@@ -76,10 +77,11 @@ def player_wins():
                 return True
     return False
 
+
 def ask_players_for_turn(player_name, stone):
     while True:
-        column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))            # if column != int erneute Spielerabfrage
-        if 1 <= column <= 7:
+        column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))
+        if 1 <= column <= 7: # if column != int erneute Spielerabfrage
             column_index = column - 1
             if is_column_full(column_index):
                 print("Die Spalte ist voll.")
@@ -112,4 +114,3 @@ while not is_board_full() and not player_wins():
 
 if is_board_full() and not player_wins():
     print("!!!WOW!!! Das Spiel endet Unentschiden.")
-
