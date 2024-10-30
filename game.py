@@ -26,6 +26,13 @@ def player_wins(stone, player_name):
     global we_have_a_winner
     for row in range(ROWS): # 4 x rows
         for column in range(COLUMNS):
+def is_column_full(column_index):
+    if play_board[0][column_index] == EMPTY_FIELD:
+        return False
+    else:
+        return True
+
+
 def player_wins():
     player_name = [player_name_1, player_name_2][current_player_index]
     stone = [STONE_1, STONE_2][current_player_index]
@@ -94,13 +101,6 @@ print(player_name_2 + " spielt mit: " + STONE_2)
 
 print("Bitte lege dinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 
-while not board_full and not we_have_a_winner:
-    ask_players_for_turn(player_name_1, STONE_1)
-    if player_wins(STONE_1, player_name_1):
-        break
-    ask_players_for_turn(player_name_2, STONE_2)
-    if player_wins(STONE_2, player_name_2):
-        break
 while not is_board_full() and not player_wins():
     current_player_index = (current_player_index + 1) % 2
     current_player_name = [player_name_1, player_name_2][current_player_index]
