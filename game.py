@@ -22,15 +22,18 @@ def place_stone(column_index, stone):
             break
 
 
-def player_wins(stone, player_name):
-    global we_have_a_winner
-    for row in range(ROWS): # 4 x rows
-        for column in range(COLUMNS):
 def is_column_full(column_index):
     if play_board[0][column_index] == EMPTY_FIELD:
         return False
     else:
         return True
+
+
+def is_board_full():
+    for column in range(COLUMNS):
+        if play_board[0][column] == EMPTY_FIELD:
+            return False
+    return True
 
 
 def player_wins():
@@ -106,4 +109,7 @@ while not is_board_full() and not player_wins():
     current_player_name = [player_name_1, player_name_2][current_player_index]
     current_player_stone = [STONE_1, STONE_2][current_player_index]
     ask_players_for_turn(current_player_name, current_player_stone)
+
+if is_board_full() and not player_wins():
+    print("!!!WOW!!! Das Spiel endet Unentschiden.")
 
