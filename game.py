@@ -2,7 +2,7 @@ import logos
 STONE_1 = "O"
 STONE_2 = "@"
 board_full = False
-we_have_a_winner = False
+current_player_index = 1
 ROWS = 6
 COLUMNS = 7
 EMPTY_FIELD = " "
@@ -15,8 +15,7 @@ def print_board():
         print("|" + "|".join(r) + '|')
 
 
-def place_stone(column, stone):
-    column_index = column - 1
+def place_stone(column_index, stone):
     for row in play_board[::-1]:
         if row[column_index] == EMPTY_FIELD:
             row[column_index] = stone
@@ -28,6 +27,8 @@ def player_wins(stone, player_name):
     for row in range(ROWS): # 4 x rows
         for column in range(COLUMNS):
 def player_wins():
+    player_name = [player_name_1, player_name_2][current_player_index]
+    stone = [STONE_1, STONE_2][current_player_index]
     for row in range(ROWS): # 4 in a row
         for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
@@ -100,3 +101,9 @@ while not board_full and not we_have_a_winner:
     ask_players_for_turn(player_name_2, STONE_2)
     if player_wins(STONE_2, player_name_2):
         break
+while not is_board_full() and not player_wins():
+    current_player_index = (current_player_index + 1) % 2
+    current_player_name = [player_name_1, player_name_2][current_player_index]
+    current_player_stone = [STONE_1, STONE_2][current_player_index]
+    ask_players_for_turn(current_player_name, current_player_stone)
+
