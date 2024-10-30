@@ -35,7 +35,7 @@ def ask_players_for_turn(player_name, stone):
         column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))            # if column != int erneute Spielerabfrage
         if 1 <= column <= 7:
             place_stone(column, stone)
-            #column_is_full(column)
+            print_board()
             break
         else:
             print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
@@ -55,6 +55,4 @@ print("Bitte lege dinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 
 while not board_full and not we_have_a_winner:
     ask_players_for_turn(player_name_1, STONE_1)
-    print_board()
     ask_players_for_turn(player_name_2, STONE_2)
-    print_board()
