@@ -27,56 +27,60 @@ def player_wins(stone, player_name):
     global we_have_a_winner
     for row in range(ROWS): # 4 x rows
         for column in range(COLUMNS):
+def player_wins():
+    for row in range(ROWS): # 4 in a row
+        for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
-                    and play_board[row][column - 1] == stone        # gibt fehler bei column 7 aus
-                    and play_board[row][column - 2] == stone
-                    and play_board[row][column - 3] == stone):
-                print(f"Player {player_name} wins")
-                we_have_a_winner = True
-                return we_have_a_winner
+                    and play_board[row][column + 1] == stone
+                    and play_board[row][column + 2] == stone
+                    and play_board[row][column + 3] == stone):
+                print(f"\n  '{player_name}' wins!")
+                return True
 
-    for row in range(ROWS): # 4 x columns
-        for column in range(COLUMNS):
+    for row in range(ROWS - 3): # 4 in a column
+        for column in range(COLUMNS ):
             if (play_board[row][column] == stone
-                    and play_board[row - 1][column] == stone
-                    and play_board[row - 2][column] == stone
-                    and play_board[row - 3][column] == stone):
-                print(f"Player {player_name} wins")
-                we_have_a_winner = True
-                return we_have_a_winner
+                    and play_board[row + 1][column] == stone
+                    and play_board[row + 2][column] == stone
+                    and play_board[row + 3][column] == stone):
+                print(f"\n  '{player_name}' wins!")
+                return True
 
-    for row in range(ROWS): # 4 x diagonal negativ
-        for column in range(COLUMNS):
+    for row in range(ROWS): # 4 x diagonal ansteigend
+        for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
-                    and play_board[row - 1][column - 6] == stone        # column + 1 gibt fehler bei column 7 aus
-                    and play_board[row - 2][column - 5] == stone
-                    and play_board[row - 3][column - 4] == stone):
-                print(f"Player {player_name} wins")
-                we_have_a_winner = True
-                return we_have_a_winner
+                    and play_board[row - 1][column + 1] == stone        # column + 1 gibt fehler bei column 7 aus
+                    and play_board[row - 2][column + 2] == stone
+                    and play_board[row - 3][column + 3] == stone):
+                print(f"\n  '{player_name}' wins!")
+                return True
 
-    for row in range(ROWS): # 4 x diagonal positiv
-        for column in range(COLUMNS):
+    for row in range(ROWS - 3): # 4 x diagonal absteigend
+        for column in range(COLUMNS - 3):
             if (play_board[row][column] == stone
-                    and play_board[row - 1][column - 1] == stone
-                    and play_board[row - 2][column - 2] == stone
-                    and play_board[row - 3][column - 3] == stone):
-                print(f"Player {player_name} wins")
-                we_have_a_winner = True
-                return we_have_a_winner
-
+                    and play_board[row + 1][column + 1] == stone
+                    and play_board[row + 2][column + 2] == stone
+                    and play_board[row + 3][column + 3] == stone):
+                print(f"\n  '{player_name}' wins!")
+                return True
+    return False
 
 def ask_players_for_turn(player_name, stone):
     while True:
         column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))            # if column != int erneute Spielerabfrage
         if 1 <= column <= 7:
-            place_stone(column, stone)
-            print_board()
-            break
+            column_index = column - 1
+            if is_column_full(column_index):
+                print("Die Spalte ist voll.")
+            else:
+                place_stone(column_index, stone)
+                print("\n" * 10)
+                print_board()
+                break
         else:
             print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
             # Schleife von vorne starten
-    print("\n" * 10)
+
 
 # Willkommensbildschirm
 print(logos.willkommen2)
