@@ -125,7 +125,7 @@ print(logos.willkommen2)
 
 load_last_game = input("Möchtest du das letzte Spiel laden? Y/N").lower()
 if load_last_game == "y":
-    with open('4wins_data.json', 'r') as json_file:
+    with open('game_data.json', 'r') as json_file:
         game_data = json.load(json_file)
         set_game_data(game_data)
 else:# Spieler werden gebeten ihre Namen einzugeben
@@ -142,9 +142,16 @@ while not is_board_full() and not player_wins():
     current_player_index = (current_player_index + 1) % 2
     current_player_stone = [STONE_1, STONE_2][current_player_index]
     ask_players_for_turn(current_player_stone)
-    with open('4wins_data.json', 'r') as json_file:
-        json.dump(game_data, json_file, indent=4)
+    with open('game_data.json', 'w') as json_file:
+        json.dump(get_game_data(), json_file, indent=4)
 
 
 if is_board_full() and not player_wins():
     print("!!!WOW!!! Das Spiel endet Unentschiden.")
+
+with open('highscore.json', 'r') as json_file:
+    highscore = json.load(json_file)
+    if current_player_name() in highscore:
+        highscore[current_player_name()]["won"] +=1
+        with open('highscore.json', 'w') as json_file:
+            json.dump(highscore, json_file, indent=4)
