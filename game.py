@@ -102,6 +102,20 @@ def get_game_data():
     "player_name_2": player_name_2
 }
 
+# Variablen aus den JSON-Daten setzen
+def set_game_data(game_data):
+    global STONE_1, STONE_2, current_player_index, ROWS, COLUMNS, EMPTY_FIELD, play_board, player_name_1, player_name_2, current_player_index, board_full
+    STONE_1 = game_data["STONE_1"]
+    STONE_2 = game_data["STONE_2"]
+    board_full = game_data["board_full"]
+    current_player_index = game_data["current_player_index"]
+    ROWS = game_data["ROWS"]
+    COLUMNS = game_data["COLUMNS"]
+    EMPTY_FIELD = game_data["EMPTY_FIELD"]
+    play_board = game_data["play_board"]
+    player_name_1 = game_data["player_name_1"]
+    player_name_2 = game_data["player_name_2"]
+
 
 # Willkommensbildschirm
 print(logos.willkommen2)
