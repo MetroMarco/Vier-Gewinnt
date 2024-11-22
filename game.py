@@ -88,6 +88,21 @@ def ask_players_for_turn(player_name, stone):
             # Schleife von vorne starten
 
 
+def get_game_data():
+    return {
+    "STONE_1": STONE_1,
+    "STONE_2": STONE_2,
+    "board_full": board_full,
+    "current_player_index": current_player_index,
+    "ROWS": ROWS,
+    "COLUMNS": COLUMNS,
+    "EMPTY_FIELD": EMPTY_FIELD,
+    "play_board": play_board,
+    "player_name_1": player_name_1,
+    "player_name_2": player_name_2
+}
+
+
 # Willkommensbildschirm
 print(logos.willkommen2)
 
