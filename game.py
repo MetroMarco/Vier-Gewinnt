@@ -2,6 +2,9 @@ import logos
 import json
 from game_values import *
 
+def current_player_name():
+    return [player_name_1, player_name_2][current_player_index]
+
 
 def print_board():
     print(logos.logo3)
@@ -31,7 +34,7 @@ def is_board_full():
 
 
 def player_wins():
-    player_name = [player_name_1, player_name_2][current_player_index]
+    player_name = current_player_name()
     stone = [STONE_1, STONE_2][current_player_index]
     for row in range(ROWS):  # 4 in a row
         for column in range(COLUMNS - 3):
@@ -71,9 +74,9 @@ def player_wins():
     return False
 
 
-def ask_players_for_turn(player_name, stone):
+def ask_players_for_turn(stone):
     while True:
-        column = int(input("\n" + player_name + " ist mit '" + stone + "' am Zug: "))
+        column = int(input("\n" + current_player_name() + " ist mit '" + stone + "' am Zug: "))
         if 1 <= column <= 7: # if column != int erneute Spielerabfrage
             column_index = column - 1
             if is_column_full(column_index):
@@ -131,9 +134,8 @@ print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 # Schleife vom Hauptspiel
 while not is_board_full() and not player_wins():
     current_player_index = (current_player_index + 1) % 2
-    current_player_name = [player_name_1, player_name_2][current_player_index]
     current_player_stone = [STONE_1, STONE_2][current_player_index]
-    ask_players_for_turn(current_player_name, current_player_stone)
+    ask_players_for_turn(current_player_stone)
 
 if is_board_full() and not player_wins():
     print("!!!WOW!!! Das Spiel endet Unentschiden.")
