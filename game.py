@@ -1,13 +1,6 @@
 import logos
-
-STONE_1 = "O"
-STONE_2 = "@"
-board_full = False
-current_player_index = 1
-ROWS = 6
-COLUMNS = 7
-EMPTY_FIELD = " "
-play_board = [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)]
+import json
+from game_values import *
 
 
 def print_board():
@@ -104,8 +97,9 @@ print(player_name_1 + " spielt mit: " + STONE_1)
 player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
 print(player_name_2 + " spielt mit: " + STONE_2)
 
-print("Bitte lege dinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
+print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 
+# Schleife vom Hauptspiel
 while not is_board_full() and not player_wins():
     current_player_index = (current_player_index + 1) % 2
     current_player_name = [player_name_1, player_name_2][current_player_index]
