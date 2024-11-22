@@ -10,3 +10,9 @@ play_board = [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)]
 
 player_name_1 = "Spieler1"
 player_name_2 = "Spieler2"
+
+highscore = {
+    "Spieler": {
+        "won": 0
+    }
+}

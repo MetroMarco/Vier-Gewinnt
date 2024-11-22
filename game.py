@@ -145,13 +145,21 @@ while not is_board_full() and not player_wins():
     with open('game_data.json', 'w') as json_file:
         json.dump(get_game_data(), json_file, indent=4)
 
-
 if is_board_full() and not player_wins():
     print("!!!WOW!!! Das Spiel endet Unentschiden.")
 
+# Highscore JSON Datei erstellen
+with open('highscore.json', 'w') as json_file:
+    json.dump(highscore, json_file, indent=4)
+# Highscore Namen und Siege hinzufügen
 with open('highscore.json', 'r') as json_file:
     highscore = json.load(json_file)
     if current_player_name() in highscore:
         highscore[current_player_name()]["won"] +=1
         with open('highscore.json', 'w') as json_file:
             json.dump(highscore, json_file, indent=4)
+    else:
+        highscore[current_player_name()] = {"won": 1}
+        with open('highscore.json', 'w') as json_file:
+            json.dump(highscore, json_file, indent=4)
+
