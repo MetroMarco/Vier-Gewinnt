@@ -77,18 +77,23 @@ def player_wins():
 def ask_players_for_turn(stone):
     while True:
         column = int(input("\n" + current_player_name() + " ist mit '" + stone + "' am Zug: "))
-        if 1 <= column <= 7: # if column != int erneute Spielerabfrage
-            column_index = column - 1
-            if is_column_full(column_index):
-                print("Die Spalte ist voll.")
-            else:
-                place_stone(column_index, stone)
-                print("\n" * 10)
-                print_board()
-                break
+        try:
+            column = int(column)
+        except ValueError:
+            print("Bitte nur Zahlen eingeben!")
         else:
-            print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen")
-            # Schleife von vorne starten
+            if 1 <= column <= 7:
+                column_index = column - 1
+                if is_column_full(column_index):
+                    print("Die Spalte ist voll.")
+                else:
+                    place_stone(column_index, stone)
+                    print("\n" * 10)
+                    print_board()
+                    break
+            else:
+                print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen.")
+                # Schleife von vorne starten
 
 
 def get_game_data():
@@ -149,8 +154,8 @@ if is_board_full() and not player_wins():
     print("!!!WOW!!! Das Spiel endet Unentschiden.")
 
 # Highscore JSON Datei erstellen
-with open('highscore.json', 'w') as json_file:
-    json.dump(highscore, json_file, indent=4)
+# with open('highscore.json', 'w') as json_file:
+#     json.dump(highscore, json_file, indent=4)
 # Highscore Namen und Siege hinzufügen
 with open('highscore.json', 'r') as json_file:
     highscore = json.load(json_file)
@@ -163,3 +168,6 @@ with open('highscore.json', 'r') as json_file:
         with open('highscore.json', 'w') as json_file:
             json.dump(highscore, json_file, indent=4)
 
+# Highscore anzeigen
+# neues Spiel spielen
+# Oberfläche anzeigen
