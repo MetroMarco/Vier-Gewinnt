@@ -2,6 +2,7 @@ import logos
 import json
 from game_values import *
 
+
 def current_player_name():
     return [player_name_1, player_name_2][current_player_index]
 
@@ -98,17 +99,33 @@ def ask_players_for_turn(stone):
 
 def get_game_data():
     return {
-    "STONE_1": STONE_1,
-    "STONE_2": STONE_2,
-    "board_full": board_full,
-    "current_player_index": current_player_index,
-    "ROWS": ROWS,
-    "COLUMNS": COLUMNS,
-    "EMPTY_FIELD": EMPTY_FIELD,
-    "play_board": play_board,
-    "player_name_1": player_name_1,
-    "player_name_2": player_name_2
-}
+        "STONE_1": STONE_1,
+        "STONE_2": STONE_2,
+        "board_full": board_full,
+        "current_player_index": current_player_index,
+        "ROWS": ROWS,
+        "COLUMNS": COLUMNS,
+        "EMPTY_FIELD": EMPTY_FIELD,
+        "play_board": play_board,
+        "player_name_1": player_name_1,
+        "player_name_2": player_name_2
+    }
+
+
+def reset_game_data():
+    return {
+        "STONE_1": STONE_1,
+        "STONE_2": STONE_2,
+        "board_full": False,
+        "current_player_index": current_player_index,
+        "ROWS": ROWS,
+        "COLUMNS": COLUMNS,
+        "EMPTY_FIELD": EMPTY_FIELD,
+        "play_board": [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)],
+        "player_name_1": "Spieler 1",
+        "player_name_2": "Spieler 2"
+    }
+
 
 # Variablen aus den JSON-Daten setzen
 def set_game_data(game_data):
@@ -133,41 +150,54 @@ if load_last_game == "y":
     with open('game_data.json', 'r') as json_file:
         game_data = json.load(json_file)
         set_game_data(game_data)
-else:# Spieler werden gebeten ihre Namen einzugeben
-    player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
-    print(player_name_1 + " spielt mit: " + STONE_1)
-    player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
-    print(player_name_2 + " spielt mit: " + STONE_2)
+else:
+    while True:
+        with open("game_data.json", "r") as json_file:
+            json.load(json_file)
+            set_game_data(reset_game_data())
+        # Spieler werden gebeten ihre Namen einzugeben
+        player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
+        print(player_name_1 + " spielt mit: " + STONE_1)
+        player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
+        print(player_name_2 + " spielt mit: " + STONE_2)
 
-print_board()
-print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
+        print_board()
+        print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
 
-# Schleife vom Hauptspiel
-while not is_board_full() and not player_wins():
-    current_player_index = (current_player_index + 1) % 2
-    current_player_stone = [STONE_1, STONE_2][current_player_index]
-    ask_players_for_turn(current_player_stone)
-    with open('game_data.json', 'w') as json_file:
-        json.dump(get_game_data(), json_file, indent=4)
+        # Schleife vom Hauptspiel
+        while not is_board_full() and not player_wins():
+            current_player_index = (current_player_index + 1) % 2
+            current_player_stone = [STONE_1, STONE_2][current_player_index]
+            ask_players_for_turn(current_player_stone)
+            with open('game_data.json', 'w') as json_file:
+                json.dump(get_game_data(), json_file, indent=4)
 
-if is_board_full() and not player_wins():
-    print("!!!WOW!!! Das Spiel endet Unentschiden.")
+        if is_board_full() and not player_wins():
+            print("!!!WOW!!! Das Spiel endet Unentschiden.")
 
-# Highscore JSON Datei erstellen
-# with open('highscore.json', 'w') as json_file:
-#     json.dump(highscore, json_file, indent=4)
-# Highscore Namen und Siege hinzufügen
-with open('highscore.json', 'r') as json_file:
-    highscore = json.load(json_file)
-    if current_player_name() in highscore:
-        highscore[current_player_name()]["won"] +=1
-        with open('highscore.json', 'w') as json_file:
-            json.dump(highscore, json_file, indent=4)
-    else:
-        highscore[current_player_name()] = {"won": 1}
-        with open('highscore.json', 'w') as json_file:
-            json.dump(highscore, json_file, indent=4)
+        # Highscore JSON Datei erstellen
+        # with open('highscore.json', 'w') as json_file:
+        #     json.dump(highscore, json_file, indent=4)
 
-# Highscore anzeigen
-# neues Spiel spielen
+        # Highscore Namen und Siege hinzufügen
+        with open('highscore.json', 'r') as json_file:
+            highscore = json.load(json_file)
+            if current_player_name() in highscore:
+                highscore[current_player_name()]["won"] += 1
+                with open('highscore.json', 'w') as json_file:
+                    json.dump(highscore, json_file, indent=4)
+            else:
+                highscore.update({current_player_name(): {"won": 1}})
+                with open('highscore.json', 'w') as json_file:
+                    json.dump(highscore, json_file, indent=4)
+
+        if input("Möchtest du ein neues Spiel starten? Y/N").lower() == "y":
+            with open('game_data.json', 'w') as json_file:
+                json.dump(reset_game_data(), json_file, indent=4)
+        else:
+            print("\nDanke fürs spielen.")
+            break
+
+
+
 # Oberfläche anzeigen
