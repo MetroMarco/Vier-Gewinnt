@@ -258,10 +258,8 @@ def detect_column_input_file_change():
     original_time = os.path.getmtime(columnInputName)
     while True:
         time.sleep(0.1)
-        print("wait")
         current_time = os.path.getmtime(columnInputName)
         if current_time != original_time:
-            print("click")
             break
 
 
@@ -279,11 +277,13 @@ def ask_players_for_turn_gui(stone):
 while not is_board_full() and not player_wins():
     with open('game_data.json', 'r') as json_file:
         game_data = json.load(json_file)
-        player_name_1 = game_data["player_name_1"]
-        player_name_2 = game_data["player_name_2"]
         current_player_index = (current_player_index + 1) % 2
         current_player_stone = [STONE_1, STONE_2][current_player_index]
         detect_column_input_file_change()
+        with open('game_data.json', 'r') as json_file:
+            game_data = json.load(json_file)
+            player_name_1 = (game_data["player_name_1"])
+            player_name_2 = (game_data["player_name_2"])
         ask_players_for_turn_gui(current_player_stone)
         dump_get_game_data()
 
