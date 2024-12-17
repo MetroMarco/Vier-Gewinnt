@@ -10,7 +10,7 @@ import time
 
 window = Tk()
 window.title("4-Gewinnt")
-window.geometry('660x700')
+window.geometry('660x730')
 window.config(bg="yellow")
 logo = PhotoImage(file='4-Gewinnt-art.png')
 logo_big = logo.zoom(2)
@@ -101,16 +101,31 @@ logolabel = Label(tab1, image=logo_small,bg="red",compound="bottom").pack()
 
 
 # Spielernamen anzeigen
-def show_and_switch_player_names():
-    with open('game_data.json', 'r') as file:
-        game_data = json.load(file)
-        player_name_1 = game_data["player_name_1"]
-        Label(tab1, text=player_name_1).pack()
+simple_name_label = (Label(tab1,text="Name x,y",bg="black",fg="white",width=97))
+simple_name_label.pack()
+
+seconds = 1
+def show_and_switch_current_player_names():
+    global seconds
+    if seconds < 3600:
+        with open('game_data.json', 'r') as file:
+            game_data = json.load(file)
+            player_names = [game_data["player_name_1"], game_data["player_name_2"]]
+            players_name = player_names[game_data["current_player_index"] - 1]
+            simple_name_label.config(text=players_name)
+            simple_name_label.after(1000, show_and_switch_current_player_names)
+            seconds +=1
+            if players_name == game_data["player_name_1"]:
+                simple_name_label.config(fg="yellow")
+            elif players_name == game_data["player_name_2"]:
+                simple_name_label.config(fg="red")
+
+show_and_switch_current_player_names()
 
 
 # Rahmen für das Spielfeld
 frame = Frame(tab1,bg="blue",bd=5,relief=RIDGE)
-# Buttons zum Legen der Steine anzeigen und Funktion zum wiedergeben der Spalte
+# Buttons zum Legen der Steine anzeigen und Funktion zum Wiedergeben der Spalte
 def click(num,frame):
     column = num
     with open('column_input.json', 'w') as f:
@@ -213,14 +228,14 @@ def really_quit():
 # Buttons on the bottom
 button_game = Button(window, text="Game", font=("Ink Free",20,"bold"),fg="blue", bg="black",
                      padx=20, bd=5, relief=RIDGE, cursor="hand2", command=gametab)
-button_game.place(x=110, y=630)
+button_game.place(x=110, y=655)
 
 button_highscore = Button(window, text="Highscore", font=("Ink Free",20,"bold"),fg="blue", bg="black",
                           padx=5, bd=5, relief=RIDGE, cursor="hand2", command=highscoretab)
-button_highscore.place(x=251, y=630)
+button_highscore.place(x=251, y=655)
 
 button_quit = Button(window, text="Quit", font=("Ink Free",20,"bold"), fg="red", bg="black",
                      padx=26, bd=5, relief=RIDGE, cursor="hand2", command=really_quit)
-button_quit.place(x=412, y=630)
+button_quit.place(x=412, y=655)
 
 window.mainloop()
