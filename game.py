@@ -276,8 +276,23 @@ def ask_players_for_turn_gui(stone):
                 break
 
 
+while not is_board_full() and not player_wins():
+    with open('game_data.json', 'r') as json_file:
+        game_data = json.load(json_file)
+        player_name_1 = game_data["player_name_1"]
+        player_name_2 = game_data["player_name_2"]
+        current_player_index = (current_player_index + 1) % 2
+        current_player_stone = [STONE_1, STONE_2][current_player_index]
+        detect_column_input_file_change()
+        ask_players_for_turn_gui(current_player_stone)
+        dump_get_game_data()
 
-#
+    if is_board_full() and not player_wins():
+        print("!!!WOW!!! Das Spiel endet unentschiden.")
+
+    # Highscore Namen und Siege hinzufügen
+    add_highscore()
+
 # thread_console = Thread(target=play_game_in_console)
 # thread_console.start()
 
