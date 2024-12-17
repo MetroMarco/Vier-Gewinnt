@@ -98,6 +98,29 @@ def ask_players_for_turn(stone):
                 print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen.")
                 # Schleife von vorne starten
 
+
+def add_highscore():
+    with open(HIGHSCORE_FILE_NAME, 'r') as json_file:
+        highscore = json.load(json_file)
+        if current_player_name() in highscore:
+            highscore[current_player_name()]["won"] += 1
+            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
+                json.dump(highscore, json_file, indent=4)
+        else:
+            highscore.update({current_player_name(): {"won": 1}})
+            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
+                json.dump(highscore, json_file, indent=4)
+
+
+def want_to_play_again():
+    with open('game_data.json', 'w') as json_file:
+        json.dump(reset_game_data(), json_file, indent=4)
+    with open("game_data.json", "r") as json_file:
+        game_data = json.load(json_file)
+        set_game_data(reset_game_data())
+    load_last_game = "n"
+
+
 # Die aktuellen Werte in die JSON Datei schreiben
 def get_game_data():
     return {
@@ -135,7 +158,7 @@ def reset_game_data():
     }
 
 
-# Variablen aus den JSON-Daten setzen
+# Variablen aus den JSON-Daten setzen um das Spiel wieder aufzunehmen
 def set_game_data(game_data):
     global STONE_1, STONE_2, current_player_index, ROWS, COLUMNS, EMPTY_FIELD, play_board, player_name_1, player_name_2, board_full
     STONE_1 = game_data["STONE_1"]
@@ -166,7 +189,13 @@ if not GAME_VALUES.is_file():
         game_data = reset_game_data()
         json.dump(game_data, json_file, indent=4)
 
-# Spiel in der Konsole
+COLUMN_INPUT_NAME = 'column_input.json'
+COLUMN_INPUT_FILE = Path(COLUMN_INPUT_NAME)
+if not COLUMN_INPUT_FILE.is_file():
+    with open(COLUMN_INPUT_NAME, 'w') as json_file:
+        json.dump(json_file)
+
+# Spiel in der Konsole__________________
 # def play_game_in_console():
 # Willkommensbildschirm
 print(logos.willkommen2)
@@ -205,29 +234,16 @@ while True:
         print("!!!WOW!!! Das Spiel endet unentschiden.")
 
     # Highscore Namen und Siege hinzufügen
-    with open(HIGHSCORE_FILE_NAME, 'r') as json_file:
-        highscore = json.load(json_file)
-        if current_player_name() in highscore:
-            highscore[current_player_name()]["won"] += 1
-            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
-                json.dump(highscore, json_file, indent=4)
-        else:
-            highscore.update({current_player_name(): {"won": 1}})
-            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
-                json.dump(highscore, json_file, indent=4)
+    add_highscore()
 
-
+    # Spiel erneut starten oder beenden
     if input("\nMöchtest du ein neues Spiel starten? Y/N").lower() == "y":
-        with open('game_data.json', 'w') as json_file:
-            json.dump(reset_game_data(), json_file, indent=4)
-        with open("game_data.json", "r") as json_file:
-            game_data = json.load(json_file)
-            set_game_data(reset_game_data())
-        load_last_game = "n"
+        want_to_play_again()
     else:
         print("\nDanke fürs spielen.")
         break
 
+# ____________________________________________________________
 # def play_game_in_tkinter():
 
 
