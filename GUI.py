@@ -5,6 +5,8 @@ from tkinter import *
 from tkinter import ttk
 import json
 from tkinter.messagebox import askyesno
+import time
+
 
 window = Tk()
 window.title("4-Gewinnt")
@@ -44,30 +46,43 @@ def get_player_2_name():
             json.dump(game_data, file, indent=4)
 
 
-# Fenster bei Spielstart anzeigen zur Namneseingabe der Spieler
+def accept_names():
+    get_player_1_name()
+    get_player_2_name()
+    neues_fenster.destroy()
+
+# Fenster bei Spielstart anzeigen zur Namenseingabe der Spieler
 neues_fenster = Toplevel(window,bg="blue")
-neues_fenster.geometry("600x200")
+neues_fenster.geometry("550x240")
 neues_fenster.title("Eingabe der Spielernamen.")
 
-with open('game_data.json', 'r') as file:
-    game_data = json.load(file)
+
 
 leeresfeld = Label(neues_fenster,bg="blue",pady=10).grid(row=0,column=0)
-spielereingabe_1 = (Label(neues_fenster, text="Spieler 1: ",font=("Ink Free",20,"bold"),bg="red",width=15,pady=10)
-                    .grid(row=1,column=0))
-player_1_button = (Button(neues_fenster,text="Submit",font=("Ink Free",20,"bold"),fg="red", bg="black",
-                        cursor="hand2", command=get_player_1_name)
-                 .grid(row=1,column=2))
-player1 = StringVar()
-textfeld1 = Entry(neues_fenster,font=("Ink Free",20,"bold"),bg="red",width=15,textvariable=player1).grid(row=1,column=1)
-spielereingabe_2 = (Label(neues_fenster, text="Spieler 2: ",font=("Ink Free",20,"bold"),bg="yellow",width=15,pady=10)
-                    .grid(row=2,column=0))
-player_2_button = (Button(neues_fenster,text="Submit",font=("Ink Free",20,"bold"),fg="yellow", bg="black",
-                        cursor="hand2", command=get_player_2_name)
-                 .grid(row=2,column=2))
-player2 = StringVar()
-textfeld2 = Entry(neues_fenster, font=("Ink Free",20,"bold"),bg="yellow",width=15,textvariable=player2).grid(row=2,column=1)
 
+spielerNameLabel_1 = (Label(neues_fenster, text="Spieler 1: ", font=("Ink Free", 18, "bold"),
+                            bg="red", width=12, pady=10))
+spielerNameLabel_1.grid(row=1, column=1)
+player1 = StringVar()
+textfeld1 = (Entry(neues_fenster,font=("Ink Free",30,"bold"),bg="red",width=10,textvariable=player1))
+textfeld1.grid(row=1,column=2)
+player_1_button = (Button(neues_fenster,text="Submit",font=("Ink Free",18,"bold"),
+                          width=8,fg="red",bg="black",cursor="hand2", command=get_player_1_name))
+player_1_button.grid(row=1,column=3)
+
+spielerNameLabel_2 = (Label(neues_fenster, text="Spieler 2: ", font=("Ink Free", 18, "bold"),
+                            bg="yellow", width=12, pady=10))
+spielerNameLabel_2.grid(row=2, column=1)
+player2 = StringVar()
+textfeld2 = Entry(neues_fenster, font=("Ink Free",30,"bold"),bg="yellow",width=10,textvariable=player2)
+textfeld2.grid(row=2,column=2)
+player_2_button = (Button(neues_fenster,text="Submit",font=("Ink Free",18,"bold"),
+                          width=8,fg="yellow", bg="black",cursor="hand2", command=get_player_2_name))
+player_2_button.grid(row=2,column=3)
+
+accept_button = (Button(neues_fenster,text="Accept",font=("Ink Free",20,"bold"),height=1,width=10,
+                      fg="yellow",bg="black",cursor="hand2",command=accept_names))
+accept_button.grid(row=3,column=2)
 neues_fenster.attributes('-topmost', True)
 
 
@@ -82,7 +97,8 @@ notebook.pack(fill=BOTH)
 
 
 # Spiellogo Anzeigen
-Label(tab1, image=logo_small,bg="red").pack()
+logolabel = Label(tab1, image=logo_small,bg="red",compound="bottom").pack()
+
 
 # Spielernamen anzeigen
 def show_and_switch_player_names():
@@ -100,9 +116,10 @@ def click(num,frame):
     with open('column_input.json', 'w') as f:
         json.dump(column, f)
     refresh_board(frame)
-    return column
+
 
 def refresh_board(frame):
+    time.sleep(0.1)
     with open('game_data.json', 'r') as f:
         data = json.load(f)
         json_play_board = data['play_board']
@@ -175,7 +192,7 @@ for persons in highscore:
 
 row = 1
 for persons in highscore:
-    Label(frame2, text=highscore[persons].get("wins"),font=("Consolas",12),
+    Label(frame2, text=highscore[persons].get("won"),font=("Consolas",12),
           width=20,bg="blue",fg="yellow").grid(row=row,column=1)
     row +=1
 
