@@ -86,14 +86,16 @@ def ask_players_for_turn(stone):
             print("Bitte nur Zahlen eingeben!")
         else:
             if 1 <= column <= 7:
-                column_index = column - 1
-                if is_column_full(column_index):
-                    print("Die Spalte ist voll.")
-                else:
-                    place_stone(column_index, stone)
-                    print("\n" * 10)
-                    print_board()
-                    break
+                with open('column_input.json', 'w') as json_file:
+                    json.dump(column,json_file)
+                    column_index = column - 1
+                    if is_column_full(column_index):
+                        print("Die Spalte ist voll.")
+                    else:
+                        place_stone(column_index, stone)
+                        print("\n" * 10)
+                        print_board()
+                        break
             else:
                 print("Bitte die Eingabe korrigieren und nur Zahlen zwischen 1 und 7 wählen.")
                 # Schleife von vorne starten
