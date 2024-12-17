@@ -3,6 +3,8 @@ import json
 from game_values import *
 from pathlib import Path
 from threading import Thread
+import os
+import time
 
 
 def current_player_name():
@@ -247,6 +249,31 @@ while True:
 
 # ____________________________________________________________
 # def play_game_in_tkinter():
+with open('game_data.json', 'w') as json_file:
+    json.dump(reset_game_data(), json_file, indent=4)
+
+
+def detect_column_input_file_change():
+    columnInputName = ('column_input.json')
+    original_time = os.path.getmtime(columnInputName)
+    while True:
+        time.sleep(0.1)
+        print("wait")
+        current_time = os.path.getmtime(columnInputName)
+        if current_time != original_time:
+            print("click")
+            break
+
+
+def ask_players_for_turn_gui(stone):
+    while True:
+        print("turn")
+        with open('column_input.json', 'r') as json_file:
+            column = json.load(json_file)
+            column_index = column - 1
+            if not is_column_full(column_index):
+                place_stone(column_index, stone)
+                break
 
 
 
