@@ -202,50 +202,49 @@ if not COLUMN_INPUT_FILE.is_file():
 # Spiel in der Konsole__________________
 # def play_game_in_console():
 # Willkommensbildschirm
-print(logos.willkommen2)
-
-load_last_game = input("Möchtest du das letzte Spiel laden? Y/N").lower()
-while True:
-    if load_last_game == "y":
-        with open('game_data.json', 'r') as json_file:
-            game_data = json.load(json_file)
-            set_game_data(game_data)
-    else:
-        with open("game_data.json", "r") as json_file:
-            json.load(json_file)
-            set_game_data(reset_game_data())
-        # Spieler werden gebeten ihre Namen einzugeben
-        player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
-        print(player_name_1 + " spielt mit: " + STONE_1)
-        player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
-        print(player_name_2 + " spielt mit: " + STONE_2)
-        dump_get_game_data()
-
-
-    print_board()
-    print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
-
-    # Schleife vom Hauptspiel
-    while not is_board_full() and not player_wins():
-        with open('game_data.json', 'r') as json_file:
-            json.load(json_file)
-            current_player_index = (current_player_index + 1) % 2
-            current_player_stone = [STONE_1, STONE_2][current_player_index]
-            ask_players_for_turn(current_player_stone)
-            dump_get_game_data()
-
-    if is_board_full() and not player_wins():
-        print("!!!WOW!!! Das Spiel endet unentschiden.")
-
-    # Highscore Namen und Siege hinzufügen
-    add_highscore()
-
-    # Spiel erneut starten oder beenden
-    if input("\nMöchtest du ein neues Spiel starten? Y/N").lower() == "y":
-        want_to_play_again()
-    else:
-        print("\nDanke fürs spielen.")
-        break
+# print(logos.willkommen2)
+#
+# load_last_game = input("Möchtest du das letzte Spiel laden? Y/N").lower()
+# while True:
+#     if load_last_game == "y":
+#         with open('game_data.json', 'r') as json_file:
+#             game_data = json.load(json_file)
+#             set_game_data(game_data)
+#     else:
+#         with open("game_data.json", "r") as json_file:
+#             json.load(json_file)
+#             set_game_data(reset_game_data())
+#         # Spieler werden gebeten ihre Namen einzugeben
+#         player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
+#         print(player_name_1 + " spielt mit: " + STONE_1)
+#         player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
+#         print(player_name_2 + " spielt mit: " + STONE_2)
+#         dump_get_game_data()
+#
+#     print_board()
+#     print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
+#
+#     # Schleife vom Hauptspiel
+#     while not is_board_full() and not player_wins():
+#         with open('game_data.json', 'r') as json_file:
+#             json.load(json_file)
+#             current_player_index = (current_player_index + 1) % 2
+#             current_player_stone = [STONE_1, STONE_2][current_player_index]
+#             ask_players_for_turn(current_player_stone)
+#             dump_get_game_data()
+#
+#     if is_board_full() and not player_wins():
+#         print("!!!WOW!!! Das Spiel endet unentschiden.")
+#
+#     # Highscore Namen und Siege hinzufügen
+#     add_highscore()
+#
+#     # Spiel erneut starten oder beenden
+#     if input("\nMöchtest du ein neues Spiel starten? Y/N").lower() == "y":
+#         want_to_play_again()
+#     else:
+#         print("\nDanke fürs spielen.")
+#         break
 
 # ____________________________________________________________
 # def play_game_in_tkinter():
@@ -264,12 +263,20 @@ def detect_column_input_file_change():
 
 
 def ask_players_for_turn_gui(stone):
+    global player_name_1, player_name_2
     while True:
         print("turn")
+        detect_column_input_file_change()
+        with open('game_data.json', 'r') as json_file:
+            game_data = json.load(json_file)
+            player_name_1 = (game_data["player_name_1"])
+            player_name_2 = (game_data["player_name_2"])
         with open('column_input.json', 'r') as json_file:
             column = json.load(json_file)
             column_index = column - 1
-            if not is_column_full(column_index):
+            if is_column_full(column_index):
+                pass
+            else:
                 place_stone(column_index, stone)
                 break
 
@@ -279,11 +286,6 @@ while not is_board_full() and not player_wins():
         game_data = json.load(json_file)
         current_player_index = (current_player_index + 1) % 2
         current_player_stone = [STONE_1, STONE_2][current_player_index]
-        detect_column_input_file_change()
-        with open('game_data.json', 'r') as json_file:
-            game_data = json.load(json_file)
-            player_name_1 = (game_data["player_name_1"])
-            player_name_2 = (game_data["player_name_2"])
         ask_players_for_turn_gui(current_player_stone)
         dump_get_game_data()
 
@@ -296,4 +298,3 @@ while not is_board_full() and not player_wins():
 # thread_console = Thread(target=play_game_in_console)
 # thread_console.start()
 
-# Oberfläche anzeigen
