@@ -6,7 +6,7 @@ from tkinter import ttk
 import json
 from tkinter.messagebox import askyesno
 import time
-
+import game_values as gv
 
 window = Tk()
 window.title("4-Gewinnt")
@@ -25,65 +25,6 @@ play_board = [[0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0]]
-
-
-# Spieler Namen vom Input bekommen und in game_data ablegen
-def get_player_1_name():
-    player_name_1 = player1.get()  ## get und write player name function seperate
-    with open('game_data.json', 'r') as file:
-        game_data = json.load(file)
-        game_data["player_name_1"] = player_name_1
-        with open('game_data.json', 'w') as file:
-            json.dump(game_data, file, indent=4)
-
-
-def get_player_2_name():
-    player_name_2 = player2.get()
-    with open('game_data.json', 'r') as file:
-        game_data = json.load(file)
-        game_data["player_name_2"] = player_name_2
-        with open('game_data.json', 'w') as file:
-            json.dump(game_data, file, indent=4)
-
-
-def accept_names():
-    get_player_1_name()
-    get_player_2_name()
-    neues_fenster.destroy()
-
-# Fenster bei Spielstart anzeigen zur Namenseingabe der Spieler
-neues_fenster = Toplevel(window,bg="blue")
-neues_fenster.geometry("550x240")
-neues_fenster.title("Eingabe der Spielernamen.")
-
-
-
-leeresfeld = Label(neues_fenster,bg="blue",pady=10).grid(row=0,column=0)
-
-spielerNameLabel_1 = (Label(neues_fenster, text="Spieler 1: ", font=("Ink Free", 18, "bold"),
-                            bg="red", width=12, pady=10))
-spielerNameLabel_1.grid(row=1, column=1)
-player1 = StringVar()
-textfeld1 = (Entry(neues_fenster,font=("Ink Free",30,"bold"),bg="red",width=10,textvariable=player1))
-textfeld1.grid(row=1,column=2)
-player_1_button = (Button(neues_fenster,text="Submit",font=("Ink Free",18,"bold"),
-                          width=8,fg="red",bg="black",cursor="hand2", command=get_player_1_name))
-player_1_button.grid(row=1,column=3)
-
-spielerNameLabel_2 = (Label(neues_fenster, text="Spieler 2: ", font=("Ink Free", 18, "bold"),
-                            bg="yellow", width=12, pady=10))
-spielerNameLabel_2.grid(row=2, column=1)
-player2 = StringVar()
-textfeld2 = Entry(neues_fenster, font=("Ink Free",30,"bold"),bg="yellow",width=10,textvariable=player2)
-textfeld2.grid(row=2,column=2)
-player_2_button = (Button(neues_fenster,text="Submit",font=("Ink Free",18,"bold"),
-                          width=8,fg="yellow", bg="black",cursor="hand2", command=get_player_2_name))
-player_2_button.grid(row=2,column=3)
-
-accept_button = (Button(neues_fenster,text="Accept",font=("Ink Free",20,"bold"),height=1,width=10,
-                      fg="yellow",bg="black",cursor="hand2",command=accept_names))
-accept_button.grid(row=3,column=2)
-neues_fenster.attributes('-topmost', True)
 
 
 # Mehrere tabs anzeigen
@@ -118,56 +59,79 @@ def get_player_2_name():
         with open('game_data.json', 'w') as file:
             json.dump(game_data, file, indent=4)
 
-# clear
-# def accept_names():
-#     get_player_1_name()
-#     get_player_2_name()
-#     inputPlayerNameWindow.destroy()
 
-# Fenster bei Spielstart anzeigen zur Namenseingabe der Spieler
-# inputPlayerNameWindow = Toplevel(window, bg="blue")
-# inputPlayerNameWindow.geometry("550x240")
-# inputPlayerNameWindow.title("Eingabe der Spielernamen.")
+def clear_names():
+    textfeld1.delete(0,END)
+    textfeld2.delete(0,END)
+
+
+def reset_game_data():
+    for row in range(6):
+        for column in range(7):
+            play_board[row][column] = Button(frame, text="", width=7, height=3, bd=3, relief=SUNKEN, bg="blue")
+            play_board[row][column].grid(row=row, column=column)
+    with open('game_data.json', 'r') as file:
+        game_data = json.load(file)
+        gv.current_player_index = 1
+        gv.ROWS = 6
+        gv.COLUMNS = 7
+        gv.EMPTY_FIELD = " "
+        gv.play_board = [[gv.EMPTY_FIELD] * gv.COLUMNS for i in range(gv.ROWS)]
+        with open('game_data.json', 'w') as file:
+            json.dump(game_data, file, indent=4)
+
+
+def goto_game():
+    notebook.select(tab2)
 
 logo1 = Label(tab1, image=logo_small,bg="red").pack()
 
-leeresfeld = Label(tab1,pady=2).pack()
+leeresfeld = Label(tab1, height=5,).pack()
 
 name_frame = Frame(tab1)
 name_frame.pack()
 spielerNameLabel_1 = (Label(name_frame, text="Spieler 1: ", font=("Ink Free", 18, "bold"),
-                            bg="red", width=12, pady=10))
+                            bg="yellow", width=12, relief="raised", pady=10))
 spielerNameLabel_1.grid(row=1, column=1)
 player1 = StringVar()
-textfeld1 = (Entry(name_frame, font=("Ink Free", 30, "bold"), bg="red", width=10, textvariable=player1))
+textfeld1 = (Entry(name_frame, font=("Ink Free", 30, "bold"), bg="yellow", width=11, textvariable=player1))
 textfeld1.grid(row=1,column=2)
 player_1_button = (Button(name_frame, text="Submit", font=("Ink Free", 18, "bold"),
-                          width=8, fg="red", bg="black", cursor="hand2", command=get_player_1_name))
+                          width=8, fg="yellow", bg="black", cursor="hand2", relief="ridge", bd=3,
+                          command=get_player_1_name))
 player_1_button.grid(row=1,column=3)
 
 spielerNameLabel_2 = (Label(name_frame, text="Spieler 2: ", font=("Ink Free", 18, "bold"),
-                            bg="yellow", width=12, pady=10))
+                            bg="red", width=12, relief="raised", pady=10))
 spielerNameLabel_2.grid(row=2, column=1)
 player2 = StringVar()
-textfeld2 = Entry(name_frame, font=("Ink Free", 30, "bold"), bg="yellow", width=10, textvariable=player2)
+textfeld2 = Entry(name_frame, font=("Ink Free", 30, "bold"), bg="red", width=11, textvariable=player2)
 textfeld2.grid(row=2,column=2)
 player_2_button = (Button(name_frame, text="Submit", font=("Ink Free", 18, "bold"),
-                          width=8, fg="yellow", bg="black", cursor="hand2", command=get_player_2_name))
+                          width=8, fg="red", bg="black", cursor="hand2", relief="ridge", bd=3,
+                          command=get_player_2_name))
 player_2_button.grid(row=2,column=3)
+# spacer = Label(name_frame,)
+# spacer.grid(row=3,column=1)
+clear_button = (Button(name_frame, text="Clear\nnames", font=("Ink Free", 18, "bold"), width=11, height=2,
+                        fg="yellow", bg="black", cursor="hand2", relief="ridge", padx=5, bd=3, command=clear_names))
+clear_button.grid(row=4,column=1)
 
-accept_button = (Button(name_frame, text="Accept", font=("Ink Free", 20, "bold"), height=1, width=10,
-                        fg="yellow", bg="black", cursor="hand2",)) #command=accept_names))
-accept_button.grid(row=3,column=2)
+reset_game_button = Button(name_frame, text="Reset Board\nto start a new Game", font=("Ink Free", 18, "bold"),
+                           cursor="hand2", width=18, padx=2, fg="yellow", bg="black", relief="ridge", bd=3,
+                           command= reset_game_data)
+reset_game_button.grid(row=4,column=2)
 
-
+goto_game_button = Button(name_frame, text="Go to\nthe Game", font=("Ink Free", 18, "bold"), cursor="hand2",
+                           width=8, padx=1, fg="yellow", bg="black", relief="ridge", bd=3, command= goto_game)
+goto_game_button.grid(row=4,column=3)
 
 # Tab 2 the game
 # Spiellogo Anzeigen
 logolabel = Label(tab2, image=logo_small,bg="red").pack()
 
-
 # Spielernamen anzeigen
-simple_name_label = (Label(tab2,text="Name x,y",bg="blue",fg="white",width=97))
+simple_name_label = (Label(tab2,text="Name x,y",font=("Consolas",12),bg="blue",fg="white",width=97))
 simple_name_label.pack()
 
 seconds = 1
@@ -319,14 +283,14 @@ def really_quit():
 
 
 # Buttons on the bottom
-input_name_button = Button(window, text="Name Input", font=("Ink Free",20,"bold"),fg="blue",bg="black",
+input_name_button = Button(window, text="Name Input", font=("Ink Free",20,"bold"),fg="yellow",bg="black",
                            padx=2,bd=5, relief=RIDGE, cursor="hand2", command= playernametab)
 input_name_button.place(x=10, y=655)
-button_game = Button(window, text="Game", font=("Ink Free",20,"bold"),fg="blue", bg="black",
+button_game = Button(window, text="Game", font=("Ink Free",20,"bold"),fg="yellow", bg="black",
                      padx=20, bd=5, relief=RIDGE, cursor="hand2", command=gametab)
 button_game.place(x=203, y=655)
 
-button_highscore = Button(window, text="Highscore", font=("Ink Free",20,"bold"),fg="blue", bg="black",
+button_highscore = Button(window, text="Highscore", font=("Ink Free",20,"bold"),fg="yellow", bg="black",
                           padx=5, bd=5, relief=RIDGE, cursor="hand2", command=highscoretab)
 button_highscore.place(x=350, y=655)
 
@@ -338,6 +302,6 @@ window.mainloop()
 
 
 # spiel Gewonnen anzeigen
-# zur Namenseingabe zurück
-# erneut das spiel starten
+# zur Namenseingabe zurück x
+# erneut das spiel starten x Spielbrett neu laden x JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft
 # update highscore label
