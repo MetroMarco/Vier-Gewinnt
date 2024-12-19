@@ -4,7 +4,8 @@
 from tkinter import *
 from tkinter import ttk
 import json
-from tkinter.messagebox import askyesno
+from tkinter import messagebox
+import os
 import time
 import game_values as gv
 
@@ -19,6 +20,8 @@ logo_highscore = PhotoImage(file='highscore-art.png')
 logo_highscore_big = logo_highscore.zoom(2)
 logo_highscore_small = logo_highscore_big.subsample(3)
 currentPlayerColor = "pink"
+players_name = "unknown"
+seconds = 1
 play_board = [[0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0],
               [0,0,0,0,0,0,0],
@@ -73,10 +76,7 @@ def reset_game_data():
     with open('game_data.json', 'r') as file:
         game_data = json.load(file)
         gv.current_player_index = 1
-        gv.ROWS = 6
-        gv.COLUMNS = 7
-        gv.EMPTY_FIELD = " "
-        gv.play_board = [[gv.EMPTY_FIELD] * gv.COLUMNS for i in range(gv.ROWS)]
+        gv.play_board = [[gv.EMPTY_FIELD] * gv.COLUMNS for i in range(gv.ROWS)] # game_data wird nicht gelöscht????
         with open('game_data.json', 'w') as file:
             json.dump(game_data, file, indent=4)
 
@@ -111,8 +111,7 @@ player_2_button = (Button(name_frame, text="Submit", font=("Ink Free", 18, "bold
                           width=8, fg="red", bg="black", cursor="hand2", relief="ridge", bd=3,
                           command=get_player_2_name))
 player_2_button.grid(row=2,column=3)
-# spacer = Label(name_frame,)
-# spacer.grid(row=3,column=1)
+
 clear_button = (Button(name_frame, text="Clear\nnames", font=("Ink Free", 18, "bold"), width=11, height=2,
                         fg="yellow", bg="black", cursor="hand2", relief="ridge", padx=5, bd=3, command=clear_names))
 clear_button.grid(row=4,column=1)
@@ -134,35 +133,49 @@ logolabel = Label(tab2, image=logo_small,bg="red").pack()
 simple_name_label = (Label(tab2,text="Name x,y",font=("Consolas",12),bg="blue",fg="white",width=97))
 simple_name_label.pack()
 
-seconds = 1
 def show_and_switch_current_player_names():
-    global seconds, currentPlayerColor
-    if seconds < 3600:
-        with open('game_data.json', 'r') as file:
-            game_data = json.load(file)
-            player_names = [game_data["player_name_1"], game_data["player_name_2"]]
-            players_name = player_names[game_data["current_player_index"] - 1]
-            simple_name_label.config(text=players_name)
-            simple_name_label.after(1000, show_and_switch_current_player_names)
-            seconds +=1
-            if players_name == game_data["player_name_1"]:
-                simple_name_label.config(fg="yellow")
-                column_1_button.config(fg="yellow")
-                column_2_button.config(fg="yellow")
-                column_3_button.config(fg="yellow")
-                column_4_button.config(fg="yellow")
-                column_5_button.config(fg="yellow")
-                column_6_button.config(fg="yellow")
-                column_7_button.config(fg="yellow")
-            elif players_name == game_data["player_name_2"]:
-                simple_name_label.config(fg="red")
-                column_1_button.config(fg="red")
-                column_2_button.config(fg="red")
-                column_3_button.config(fg="red")
-                column_4_button.config(fg="red")
-                column_5_button.config(fg="red")
-                column_6_button.config(fg="red")
-                column_7_button.config(fg="red")
+    global currentPlayerColor, players_name
+    with open('game_data.json', 'r') as file:
+        game_data = json.load(file)
+        player_names = [game_data["player_name_1"], game_data["player_name_2"]]
+        players_name = player_names[game_data["current_player_index"] - 1]
+        simple_name_label.config(text=players_name)
+        simple_name_label.after(1000, show_and_switch_current_player_names)
+        if players_name == game_data["player_name_1"]:
+            simple_name_label.config(fg="yellow")
+            column_1_button.config(fg="yellow")
+            column_2_button.config(fg="yellow")
+            column_3_button.config(fg="yellow")
+            column_4_button.config(fg="yellow")
+            column_5_button.config(fg="yellow")
+            column_6_button.config(fg="yellow")
+            column_7_button.config(fg="yellow")
+            return players_name
+        elif players_name == game_data["player_name_2"]:
+            simple_name_label.config(fg="red")
+            column_1_button.config(fg="red")
+            column_2_button.config(fg="red")
+            column_3_button.config(fg="red")
+            column_4_button.config(fg="red")
+            column_5_button.config(fg="red")
+            column_6_button.config(fg="red")
+            column_7_button.config(fg="red")
+            return players_name
+
+
+def player_wins_popup():
+    global players_name
+    player_wins_window = Toplevel(window,bg="blue")
+    player_wins_window.title("Player Wins")
+    player_wins_window.geometry("500x300")
+    wins_text = Label(player_wins_window, text=f"{players_name} Wins", font=("Ink Free", 50, "bold"), bg="blue")
+    wins_text.pack()
+    with open('game_data.json', 'r') as file:
+        game_data = json.load(file)
+        if players_name == game_data["player_name_1"]:
+            wins_text.config(fg="yellow")
+        else:
+            wins_text.config(fg="red")
 
 
 # Rahmen für das Spielfeld
@@ -184,6 +197,7 @@ def refresh_board(frame):
         JSON_STONE_2 = data['STONE_2']
         STONE_1_COLOR = "yellow"
         STONE_2_COLOR = "red"
+        we_have_a_winner = data['we_have_a_winner']
         for row in range(6):
             for column in range(7):
                 current_stone = json_play_board[row][column]
@@ -193,6 +207,8 @@ def refresh_board(frame):
                 elif current_stone == JSON_STONE_2:
                     Button(frame, text="", width=7, height=3, bd=3, relief=SUNKEN, bg=STONE_2_COLOR
                            ).grid(row=row, column=column)
+        if we_have_a_winner:
+            player_wins_popup()
 
 
 
@@ -237,7 +253,8 @@ frame.pack()
 
 show_and_switch_current_player_names()
 
-# tab3 the Highscore
+
+# # tab3 the Highscore
 # Highscore
 highscore_label = Label(tab3, image=logo_highscore_small, bg="red")
 highscore_label.pack()
@@ -277,7 +294,7 @@ def gametab():
     notebook.select(tab2)
 
 def really_quit():
-    if askyesno("Quit", "Do you really want to quit?"):
+    if messagebox.askyesno("Quit", "Do you really want to quit?"):
         window.destroy()
 
 
@@ -301,7 +318,8 @@ button_quit.place(x=517, y=655)
 window.mainloop()
 
 
-# spiel Gewonnen anzeigen
 # zur Namenseingabe zurück x
-# erneut das spiel starten x Spielbrett neu laden x JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft
+# erneut das spiel starten x Spielbrett neu laden x
+# spiel Gewonnen anzeigen
+# JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft
 # update highscore label
