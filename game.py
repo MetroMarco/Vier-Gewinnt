@@ -137,7 +137,8 @@ def get_game_data():
         "EMPTY_FIELD": EMPTY_FIELD,
         "play_board": play_board,
         "player_name_1": player_name_1,
-        "player_name_2": player_name_2
+        "player_name_2": player_name_2,
+        "we_have_a_winner": we_have_a_winner,
     }
 
 
@@ -158,13 +159,15 @@ def reset_game_data():
         "EMPTY_FIELD": EMPTY_FIELD,
         "play_board": [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)],
         "player_name_1": "Spieler 1",
-        "player_name_2": "Spieler 2"
+        "player_name_2": "Spieler 2",
+        "we_have_a_winner": False
     }
 
 
 # Variablen aus den JSON-Daten setzen um das Spiel wieder aufzunehmen
 def set_game_data(game_data):
-    global STONE_1, STONE_2, current_player_index, ROWS, COLUMNS, EMPTY_FIELD, play_board, player_name_1, player_name_2, board_full
+    global STONE_1, STONE_2, current_player_index, ROWS, COLUMNS, EMPTY_FIELD, play_board, player_name_1, \
+        player_name_2, board_full, we_have_a_winner
     STONE_1 = game_data["STONE_1"]
     STONE_2 = game_data["STONE_2"]
     board_full = game_data["board_full"]
@@ -175,6 +178,7 @@ def set_game_data(game_data):
     play_board = game_data["play_board"]
     player_name_1 = game_data["player_name_1"]
     player_name_2 = game_data["player_name_2"]
+    we_have_a_winner = game_data["we_have_a_winner"]
 
 
 
@@ -265,7 +269,6 @@ def detect_column_input_file_change():
 def ask_players_for_turn_gui(stone):
     global player_name_1, player_name_2
     while True:
-        print("turn")
         detect_column_input_file_change()
         with open('game_data.json', 'r') as json_file:
             game_data = json.load(json_file)
@@ -299,7 +302,10 @@ while True:
     if player_wins():
         # Highscore Namen und Siege hinzufügen
         add_highscore()
-        time.sleep(0.1)
+        we_have_a_winner = True
+        with open('game_data.json', 'w') as json_file:
+            json.dump(get_game_data(), json_file, indent=4)
+        time.sleep(2)
         with open('game_data.json', 'w') as json_file:
             game_data = reset_game_data()
             set_game_data(game_data)
