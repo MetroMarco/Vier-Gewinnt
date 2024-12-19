@@ -82,7 +82,10 @@ def reset_game_data():
 
 
 def goto_game():
+    get_player_1_name()
+    get_player_2_name()
     notebook.select(tab2)
+
 
 logo1 = Label(tab1, image=logo_small,bg="red").pack()
 
@@ -163,19 +166,34 @@ def show_and_switch_current_player_names():
             return players_name
 
 
+
 def player_wins_popup():
     global players_name
+
+    def close_window():
+        player_wins_window.destroy()
+
     player_wins_window = Toplevel(window,bg="blue")
     player_wins_window.title("Player Wins")
-    player_wins_window.geometry("500x300")
-    wins_text = Label(player_wins_window, text=f"{players_name} Wins", font=("Ink Free", 50, "bold"), bg="blue")
+    player_wins_window.geometry("500x250")
+    wins_text = Label(player_wins_window, text=f"{players_name} Wins", font=("Ink Free", 50, "bold"), height=2, width=20, fg="white")
     wins_text.pack()
+    button_close = Button(player_wins_window, text="Close", font=("Ink Free",20,"bold"),fg="yellow", bg="black",
+                         bd=5, relief=RAISED, cursor="hand2", width=15, pady=7, command=close_window)
+    button_close.pack()
     with open('game_data.json', 'r') as file:
         game_data = json.load(file)
         if players_name == game_data["player_name_1"]:
-            wins_text.config(fg="yellow")
+            wins_text.config(bg="yellow", fg="black")
+            button_close.config(fg="yellow")
         else:
-            wins_text.config(fg="red")
+            wins_text.config(bg="red")
+            button_close.config(fg="red")
+
+
+
+
+
 
 
 # Rahmen für das Spielfeld
@@ -283,6 +301,8 @@ for persons in highscore:
 
 frame2.pack()
 
+frame2.after(1000)
+
 # switch between tabs with the buttons and exit button
 def playernametab():
     notebook.select(tab1)
@@ -312,7 +332,7 @@ button_highscore = Button(window, text="Highscore", font=("Ink Free",20,"bold"),
 button_highscore.place(x=350, y=655)
 
 button_quit = Button(window, text="Quit", font=("Ink Free",20,"bold"), fg="red", bg="black",
-                     padx=26, bd=5, relief=RIDGE, cursor="hand2", command=really_quit)
+                     padx=26, bd=5, relief=RIDGE, cursor="hand2", command=player_wins_popup)
 button_quit.place(x=517, y=655)
 
 window.mainloop()
