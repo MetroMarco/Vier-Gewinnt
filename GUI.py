@@ -46,7 +46,7 @@ notebook.pack(fill=BOTH)
 # Tab 1 Eingabe der Spielernamen
 # Spieler Namen vom Input bekommen und in game_data ablegen
 def get_player_1_name():
-    player_name_1 = player1.get()  ## get und write player name function seperate
+    player_name_1 = player1.get()  ## get und write player name function separately
     with open('game_data.json', 'r') as file:
         game_data = json.load(file)
         game_data["player_name_1"] = player_name_1
@@ -95,38 +95,39 @@ name_frame = Frame(tab1)
 name_frame.pack()
 spielerNameLabel_1 = (Label(name_frame, text="Spieler 1: ", font=("Ink Free", 18, "bold"),
                             bg="yellow", width=12, relief="raised", pady=10))
-spielerNameLabel_1.grid(row=1, column=1)
+spielerNameLabel_1.grid(row=1, column=1, pady=1)
 player1 = StringVar()
 textfeld1 = (Entry(name_frame, font=("Ink Free", 30, "bold"), bg="yellow", width=11, textvariable=player1))
-textfeld1.grid(row=1,column=2)
+textfeld1.grid(row=1,column=2, pady=1)
+textfeld1.focus()
 player_1_button = (Button(name_frame, text="Submit", font=("Ink Free", 18, "bold"),
                           width=8, fg="yellow", bg="black", cursor="hand2", relief="ridge", bd=3,
                           command=get_player_1_name))
-player_1_button.grid(row=1,column=3)
+player_1_button.grid(row=1,column=3, pady=1)
 
 spielerNameLabel_2 = (Label(name_frame, text="Spieler 2: ", font=("Ink Free", 18, "bold"),
                             bg="red", width=12, relief="raised", pady=10))
-spielerNameLabel_2.grid(row=2, column=1)
+spielerNameLabel_2.grid(row=2, column=1, pady=1)
 player2 = StringVar()
 textfeld2 = Entry(name_frame, font=("Ink Free", 30, "bold"), bg="red", width=11, textvariable=player2)
-textfeld2.grid(row=2,column=2)
+textfeld2.grid(row=2,column=2, pady=1)
 player_2_button = (Button(name_frame, text="Submit", font=("Ink Free", 18, "bold"),
                           width=8, fg="red", bg="black", cursor="hand2", relief="ridge", bd=3,
                           command=get_player_2_name))
-player_2_button.grid(row=2,column=3)
+player_2_button.grid(row=2,column=3, pady=1)
 
 clear_button = (Button(name_frame, text="Clear\nnames", font=("Ink Free", 18, "bold"), width=11, height=2,
                         fg="yellow", bg="black", cursor="hand2", relief="ridge", padx=5, bd=3, command=clear_names))
-clear_button.grid(row=4,column=1)
+clear_button.grid(row=4,column=1, pady=20)
 
 reset_game_button = Button(name_frame, text="Reset Board\nto start a new Game", font=("Ink Free", 18, "bold"),
                            cursor="hand2", width=18, padx=2, fg="yellow", bg="black", relief="ridge", bd=3,
                            command= reset_game_data)
-reset_game_button.grid(row=4,column=2)
+reset_game_button.grid(row=4,column=2, pady=20)
 
 goto_game_button = Button(name_frame, text="Go to\nthe Game", font=("Ink Free", 18, "bold"), cursor="hand2",
                            width=8, padx=1, fg="yellow", bg="black", relief="ridge", bd=3, command= goto_game)
-goto_game_button.grid(row=4,column=3)
+goto_game_button.grid(row=4,column=3, pady=20)
 
 # Tab 2 the game
 # Spiellogo Anzeigen
@@ -207,7 +208,7 @@ def click(num,frame):
 
 
 def refresh_board(frame):
-    time.sleep(0.1)
+    time.sleep(0.05)
     with open('game_data.json', 'r') as f:
         data = json.load(f)
         json_play_board = data['play_board']
@@ -332,7 +333,7 @@ button_highscore = Button(window, text="Highscore", font=("Ink Free",20,"bold"),
 button_highscore.place(x=350, y=655)
 
 button_quit = Button(window, text="Quit", font=("Ink Free",20,"bold"), fg="red", bg="black",
-                     padx=26, bd=5, relief=RIDGE, cursor="hand2", command=player_wins_popup)
+                     padx=26, bd=5, relief=RIDGE, cursor="hand2", command=really_quit)
 button_quit.place(x=517, y=655)
 
 window.mainloop()
@@ -340,6 +341,7 @@ window.mainloop()
 
 # zur Namenseingabe zurück x
 # erneut das spiel starten x Spielbrett neu laden x
-# spiel Gewonnen anzeigen
-# JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft
-# update highscore label
+# spiel Gewonnen anzeigen X
+
+# JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft______
+# update highscore label_______
