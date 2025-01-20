@@ -5,6 +5,8 @@ from pathlib import Path
 from threading import Thread
 import os
 import time
+import sys
+import subprocess
 
 
 def current_player_name():
@@ -264,6 +266,7 @@ def detect_column_input_file_change():
         current_time = os.path.getmtime(columnInputName)
         if current_time != original_time:
             break
+        time.sleep(0.05)
 
 
 def ask_players_for_turn_gui(stone):
