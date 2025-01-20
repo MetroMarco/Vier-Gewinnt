@@ -205,114 +205,117 @@ if not COLUMN_INPUT_FILE.is_file():
     with open(COLUMN_INPUT_NAME, 'w') as json_file:
         json.dump(json_file)
 
+
 # Spiel in der Konsole__________________
-# def play_game_in_console():
-# Willkommensbildschirm
-# print(logos.willkommen2)
-#
-# load_last_game = input("Möchtest du das letzte Spiel laden? Y/N").lower()
-# while True:
-#     if load_last_game == "y":
-#         with open('game_data.json', 'r') as json_file:
-#             game_data = json.load(json_file)
-#             set_game_data(game_data)
-#     else:
-#         with open("game_data.json", "r") as json_file:
-#             json.load(json_file)
-#             set_game_data(reset_game_data())
-#         # Spieler werden gebeten ihre Namen einzugeben
-#         player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
-#         print(player_name_1 + " spielt mit: " + STONE_1)
-#         player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
-#         print(player_name_2 + " spielt mit: " + STONE_2)
-#         dump_get_game_data()
-#
-#     print_board()
-#     print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
-#
-#     # Schleife vom Hauptspiel
-#     while not is_board_full() and not player_wins():
-#         with open('game_data.json', 'r') as json_file:
-#             json.load(json_file)
-#             current_player_index = (current_player_index + 1) % 2
-#             current_player_stone = [STONE_1, STONE_2][current_player_index]
-#             ask_players_for_turn(current_player_stone)
-#             dump_get_game_data()
-#
-#     if is_board_full() and not player_wins():
-#         print("!!!WOW!!! Das Spiel endet unentschiden.")
-#
-#     # Highscore Namen und Siege hinzufügen
-#     add_highscore()
-#
-#     # Spiel erneut starten oder beenden
-#     if input("\nMöchtest du ein neues Spiel starten? Y/N").lower() == "y":
-#         want_to_play_again()
-#     else:
-#         print("\nDanke fürs spielen.")
-#         break
+if sys.argv[1] == "console":
+    # Willkommensbildschirm
+    print(logos.willkommen2)
+
+    load_last_game = input("Möchtest du das letzte Spiel laden? Y/N").lower()
+    while True:
+        if load_last_game == "y":
+            with open('game_data.json', 'r') as json_file:
+                game_data = json.load(json_file)
+                set_game_data(game_data)
+        else:
+            with open("game_data.json", "r") as json_file:
+                json.load(json_file)
+                set_game_data(reset_game_data())
+            # Spieler werden gebeten ihre Namen einzugeben
+            player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
+            print(player_name_1 + " spielt mit: " + STONE_1)
+            player_name_2 = input("Spieler 2:Bitte geben Sie ihren Namen ein: ")
+            print(player_name_2 + " spielt mit: " + STONE_2)
+            dump_get_game_data()
+
+        print_board()
+        print("Bitte lege deinen Stein in eine der Spalten 1, 2, 3, 4, 5, 6 oder 7")
+
+        # Schleife vom Hauptspiel
+        while not is_board_full() and not player_wins():
+            with open('game_data.json', 'r') as json_file:
+                json.load(json_file)
+                current_player_index = (current_player_index + 1) % 2
+                current_player_stone = [STONE_1, STONE_2][current_player_index]
+                ask_players_for_turn(current_player_stone)
+                dump_get_game_data()
+
+        if is_board_full() and not player_wins():
+            print("!!!WOW!!! Das Spiel endet unentschiden.")
+
+        # Highscore Namen und Siege hinzufügen
+        add_highscore()
+
+        # Spiel erneut starten oder beenden
+        if input("\nMöchtest du ein neues Spiel starten? Y/N").lower() == "y":
+            want_to_play_again()
+        else:
+            print("\nDanke fürs spielen.")
+            break
 
 # ____________________________________________________________
 # def play_game_in_tkinter():
-with open('game_data.json', 'w') as json_file:
-    json.dump(reset_game_data(), json_file, indent=4)
+elif sys.argv[1] == "gui":
+    subprocess.Popen(["python", "GUI.py"])
+
+    with open('game_data.json', 'w') as json_file:
+        json.dump(reset_game_data(), json_file, indent=4)
 
 
-def detect_column_input_file_change():
-    columnInputName = ('column_input.json')
-    original_time = os.path.getmtime(columnInputName)
-    while True:
-        time.sleep(0.1)
-        current_time = os.path.getmtime(columnInputName)
-        if current_time != original_time:
-            break
-        time.sleep(0.05)
-
-
-def ask_players_for_turn_gui(stone):
-    global player_name_1, player_name_2
-    while True:
-        detect_column_input_file_change()
-        with open('game_data.json', 'r') as json_file:
-            game_data = json.load(json_file)
-            player_name_1 = (game_data["player_name_1"])
-            player_name_2 = (game_data["player_name_2"])
-        with open('column_input.json', 'r') as json_file:
-            column = json.load(json_file)
-            column_index = column - 1
-            if is_column_full(column_index):
-                pass
-            else:
-                place_stone(column_index, stone)
+    def detect_column_input_file_change():
+        columnInputName = ('column_input.json')
+        original_time = os.path.getmtime(columnInputName)
+        while True:
+            time.sleep(0.05)
+            current_time = os.path.getmtime(columnInputName)
+            if current_time != original_time:
                 break
 
 
-while True:
-    with open('game_data.json', 'r') as json_file:
-        game_data = json.load(json_file)
-        current_player_index = (current_player_index + 1) % 2
-        current_player_stone = [STONE_1, STONE_2][current_player_index]
-        ask_players_for_turn_gui(current_player_stone)
-        dump_get_game_data()
+    def ask_players_for_turn_gui(stone):
+        global player_name_1, player_name_2
+        while True:
+            detect_column_input_file_change()
+            with open('game_data.json', 'r') as json_file:
+                game_data = json.load(json_file)
+                player_name_1 = (game_data["player_name_1"])
+                player_name_2 = (game_data["player_name_2"])
+            with open('column_input.json', 'r') as json_file:
+                column = json.load(json_file)
+                column_index = column - 1
+                if is_column_full(column_index):
+                    pass
+                else:
+                    place_stone(column_index, stone)
+                    break
 
-    if is_board_full() and not player_wins():
-        with open('game_data.json', 'w') as json_file:
-            game_data = reset_game_data()
-            set_game_data(game_data)
-            json.dump(game_data, json_file, indent=4)
-            # Unentschieden
 
-    if player_wins():
-        # Highscore Namen und Siege hinzufügen
-        add_highscore()
-        we_have_a_winner = True
-        with open('game_data.json', 'w') as json_file:
-            json.dump(get_game_data(), json_file, indent=4)
-        time.sleep(2)
-        with open('game_data.json', 'w') as json_file:
-            game_data = reset_game_data()
-            set_game_data(game_data)
-            json.dump(game_data, json_file, indent=4)
+    while True:
+        with open('game_data.json', 'r') as json_file:
+            game_data = json.load(json_file)
+            current_player_index = (current_player_index + 1) % 2
+            current_player_stone = [STONE_1, STONE_2][current_player_index]
+            ask_players_for_turn_gui(current_player_stone)
+            dump_get_game_data()
+
+        if is_board_full() and not player_wins():
+            with open('game_data.json', 'w') as json_file:
+                game_data = reset_game_data()
+                set_game_data(game_data)
+                json.dump(game_data, json_file, indent=4)
+                # Unentschieden
+
+        if player_wins():
+            # Highscore Namen und Siege hinzufügen
+            add_highscore()
+            we_have_a_winner = True
+            with open('game_data.json', 'w') as json_file:
+                json.dump(get_game_data(), json_file, indent=4)
+            time.sleep(2)
+            with open('game_data.json', 'w') as json_file:
+                game_data = reset_game_data()
+                set_game_data(game_data)
+                json.dump(game_data, json_file, indent=4)
 
 
 
