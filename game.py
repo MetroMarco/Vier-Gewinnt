@@ -41,7 +41,6 @@ def is_board_full():
 
 
 def player_wins():
-    player_name = current_player_name()
     stone = [STONE_1, STONE_2][current_player_index]
     for row in range(ROWS):  # 4 in a row
         for column in range(COLUMNS - 3):
@@ -49,7 +48,6 @@ def player_wins():
                     and play_board[row][column + 1] == stone
                     and play_board[row][column + 2] == stone
                     and play_board[row][column + 3] == stone):
-                print(f"\n  '{player_name}' hat gewonnen!")
                 return True
 
     for row in range(ROWS - 3):  # 4 in a column
@@ -58,7 +56,6 @@ def player_wins():
                     and play_board[row + 1][column] == stone
                     and play_board[row + 2][column] == stone
                     and play_board[row + 3][column] == stone):
-                print(f"\n  '{player_name}' hat gewonnen!")
                 return True
 
     for row in range(ROWS):  # 4 x diagonal ansteigend
@@ -67,7 +64,6 @@ def player_wins():
                     and play_board[row - 1][column + 1] == stone
                     and play_board[row - 2][column + 2] == stone
                     and play_board[row - 3][column + 3] == stone):
-                print(f"\n  '{player_name}' hat gewonnen!")
                 return True
 
     for row in range(ROWS - 3):  # 4 x diagonal absteigend
@@ -76,7 +72,6 @@ def player_wins():
                     and play_board[row + 1][column + 1] == stone
                     and play_board[row + 2][column + 2] == stone
                     and play_board[row + 3][column + 3] == stone):
-                print(f"\n  '{player_name}' hat gewonnen!")
                 return True
     return False
 
@@ -108,14 +103,20 @@ def ask_players_for_turn(stone):
 def add_highscore():
     with open(HIGHSCORE_FILE_NAME, 'r') as json_file:
         highscore = json.load(json_file)
-        if current_player_name() in highscore:
-            highscore[current_player_name()]["won"] += 1
-            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
-                json.dump(highscore, json_file, indent=4)
-        else:
-            highscore.update({current_player_name(): {"won": 1}})
-            with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
-                json.dump(highscore, json_file, indent=4)
+
+    new_player = True
+    for p in highscore[HIGHSCORE_ARRAY]:
+        if current_player_name() == p[PLAYER_DATA]:
+            p[SCORE_DATA] += 1
+            new_player = False
+            break
+    if new_player:
+        highscore[HIGHSCORE_ARRAY].append({PLAYER_DATA: current_player_name(), SCORE_DATA: 1})
+
+    sorted_highscore = sorted(highscore[HIGHSCORE_ARRAY], key= lambda item: item[SCORE_DATA], reverse=True)
+
+    with open(HIGHSCORE_FILE_NAME, 'w') as json_file:
+        json.dump({HIGHSCORE_ARRAY: sorted_highscore}, json_file, indent=4)
 
 
 def want_to_play_again():
@@ -243,6 +244,10 @@ if sys.argv[1] == "console":
         if is_board_full() and not player_wins():
             print("!!!WOW!!! Das Spiel endet unentschiden.")
 
+        if player_wins():
+            we_have_a_winner = True
+            print(f"\n  '{current_player_name()}' hat gewonnen!")
+
         # Highscore Namen und Siege hinzufügen
         add_highscore()
 
@@ -266,7 +271,7 @@ elif sys.argv[1] == "gui":
         columnInputName = ('column_input.json')
         original_time = os.path.getmtime(columnInputName)
         while True:
-            time.sleep(0.05)
+            time.sleep(0.05) # only checks all 0.05 s after a new file to save performance
             current_time = os.path.getmtime(columnInputName)
             if current_time != original_time:
                 break
@@ -311,7 +316,7 @@ elif sys.argv[1] == "gui":
             we_have_a_winner = True
             with open('game_data.json', 'w') as json_file:
                 json.dump(get_game_data(), json_file, indent=4)
-            time.sleep(2)
+            time.sleep(1)
             with open('game_data.json', 'w') as json_file:
                 game_data = reset_game_data()
                 set_game_data(game_data)
@@ -319,7 +324,4 @@ elif sys.argv[1] == "gui":
 
 
 
-
-# thread_console = Thread(target=play_game_in_console)
-# thread_console.start()
 
