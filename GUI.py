@@ -8,6 +8,7 @@ from tkinter import messagebox
 import os
 import time
 import game_values as gv
+from game_values import HIGHSCORE_ARRAY, PLAYER_DATA, SCORE_DATA
 
 window = Tk()
 window.title("4-Gewinnt")
@@ -43,7 +44,7 @@ notebook.add(tab3, text="Highscore")
 notebook.pack(fill=BOTH)
 
 
-# Tab 1 Eingabe der Spielernamen
+# ______________ Tab 1 Eingabe der Spielernamen ___________________
 # Spieler Namen vom Input bekommen und in game_data ablegen
 def get_player_1_name():
     player_name_1 = player1.get()  ## get und write player name function separately
@@ -129,7 +130,8 @@ goto_game_button = Button(name_frame, text="Go to\nthe Game", font=("Ink Free", 
                            width=8, padx=1, fg="yellow", bg="black", relief="ridge", bd=3, command= goto_game)
 goto_game_button.grid(row=4,column=3, pady=20)
 
-# Tab 2 the game
+
+# ____________________ Tab 2 the game ______________________
 # Spiellogo Anzeigen
 logolabel = Label(tab2, image=logo_small,bg="red").pack()
 
@@ -192,12 +194,7 @@ def player_wins_popup():
             button_close.config(fg="red")
 
 
-
-
-
-
-
-# Rahmen für das Spielfeld
+# ________________ Rahmen für das Spielfeld ____________
 frame = Frame(tab2,bg="blue",bd=5,relief=RIDGE)
 # Buttons zum Legen der Steine anzeigen und Funktion zum Wiedergeben der Spalte
 def click(num,frame):
@@ -263,7 +260,7 @@ column_7_button.pack(side=LEFT)
 column_buttons.pack()
 
 
-# Spielfeld
+# ____________ Spielfeld _____________
 for row in range(6):
     for column in range(7):
         play_board[row][column] = Button(frame, text="", width=7, height=3, bd=3, relief=SUNKEN, bg="blue")
@@ -273,8 +270,7 @@ frame.pack()
 show_and_switch_current_player_names()
 
 
-# # tab3 the Highscore
-# Highscore
+# ___________ Tab3 the Highscore _______________
 highscore_label = Label(tab3, image=logo_highscore_small, bg="red")
 highscore_label.pack()
 
@@ -288,19 +284,29 @@ nameLabel = Label(frame2, text="Name",font=("Consolas",18),width=15,bg="darkblue
 winsLabel = Label(frame2, text="Wins",font=("Consolas",18),width=15,bg="darkblue",fg="yellow",
                   bd=3,relief=RIDGE).grid(row=0,column=1)
 
-row = 1
-for persons in highscore:
-    Label(frame2, text=persons,font=("Consolas",12),
-          width=20,bg="blue",fg="yellow").grid(row=row,column=0)
-    row += 1
-
-row = 1
-for persons in highscore:
-    Label(frame2, text=highscore[persons].get("won"),font=("Consolas",12),
-          width=20,bg="blue",fg="yellow").grid(row=row,column=1)
-    row +=1
-
 frame2.pack()
+
+def update_highscore_frame():
+    with open('highscore.json', 'r') as file:
+        highscore = json.load(file)
+
+    row = 1
+    for person in highscore[HIGHSCORE_ARRAY]:
+        if row < 6:
+            Label(frame2, text=person[PLAYER_DATA],font=("Consolas",12),
+                  width=20,bg="blue",fg="yellow").grid(row=row,column=0)
+        row += 1
+
+
+    row = 1
+    for person in highscore[HIGHSCORE_ARRAY]:
+        if row < 6:
+            Label(frame2, text=person[SCORE_DATA],font=("Consolas",12),
+                  width=20,bg="blue",fg="yellow").grid(row=row,column=1)
+        row +=1
+
+
+    frame2.pack()
 
 frame2.after(1000)
 
@@ -319,8 +325,7 @@ def really_quit():
         window.destroy()
 
 
-
-# Buttons on the bottom
+# _________________ Buttons on the bottom _____________
 input_name_button = Button(window, text="Name Input", font=("Ink Free",20,"bold"),fg="yellow",bg="black",
                            padx=2,bd=5, relief=RIDGE, cursor="hand2", command= playernametab)
 input_name_button.place(x=10, y=655)
@@ -343,5 +348,5 @@ window.mainloop()
 # erneut das spiel starten x Spielbrett neu laden x
 # spiel Gewonnen anzeigen X
 
-# JSON wird noch nicht zurückgesetzt wenn das Spiel noch läuft______
+# die cache wird nicht zurückgesetzt beim reset play board button
 # update highscore label_______
