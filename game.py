@@ -2,7 +2,6 @@ import logos
 import json
 from game_values import *
 from pathlib import Path
-from threading import Thread
 import os
 import time
 import sys
@@ -122,8 +121,6 @@ def add_highscore():
 def want_to_play_again():
     with open('game_data.json', 'w') as json_file:
         json.dump(reset_game_data(), json_file, indent=4)
-    with open("game_data.json", "r") as json_file:
-        game_data = json.load(json_file)
         set_game_data(reset_game_data())
     load_last_game = "n"
 
@@ -142,6 +139,8 @@ def get_game_data():
         "player_name_1": player_name_1,
         "player_name_2": player_name_2,
         "we_have_a_winner": we_have_a_winner,
+        "reset_game": reset_game
+
     }
 
 
@@ -163,14 +162,15 @@ def reset_game_data():
         "play_board": [[EMPTY_FIELD] * COLUMNS for i in range(ROWS)],
         "player_name_1": "Spieler 1",
         "player_name_2": "Spieler 2",
-        "we_have_a_winner": False
+        "we_have_a_winner": False,
+        "reset_game": False
     }
 
 
 # Variablen aus den JSON-Daten setzen um das Spiel wieder aufzunehmen
 def set_game_data(game_data):
     global STONE_1, STONE_2, current_player_index, ROWS, COLUMNS, EMPTY_FIELD, play_board, player_name_1, \
-        player_name_2, board_full, we_have_a_winner
+        player_name_2, board_full, we_have_a_winner, reset_game
     STONE_1 = game_data["STONE_1"]
     STONE_2 = game_data["STONE_2"]
     board_full = game_data["board_full"]
@@ -182,6 +182,7 @@ def set_game_data(game_data):
     player_name_1 = game_data["player_name_1"]
     player_name_2 = game_data["player_name_2"]
     we_have_a_winner = game_data["we_have_a_winner"]
+    reset_game = game_data["reset_game"]
 
 
 
@@ -219,9 +220,7 @@ if sys.argv[1] == "console":
                 game_data = json.load(json_file)
                 set_game_data(game_data)
         else:
-            with open("game_data.json", "r") as json_file:
-                json.load(json_file)
-                set_game_data(reset_game_data())
+            set_game_data(reset_game_data())
             # Spieler werden gebeten ihre Namen einzugeben
             player_name_1 = input("Spieler 1: Bitte geben Sie ihren Namen ein: ")
             print(player_name_1 + " spielt mit: " + STONE_1)
@@ -264,6 +263,7 @@ elif sys.argv[1] == "gui":
     subprocess.Popen(["python", "GUI.py"])
 
     with open('game_data.json', 'w') as json_file:
+        set_game_data(reset_game_data())
         json.dump(reset_game_data(), json_file, indent=4)
 
 
@@ -271,7 +271,6 @@ elif sys.argv[1] == "gui":
         columnInputName = ('column_input.json')
         original_time = os.path.getmtime(columnInputName)
         while True:
-            time.sleep(0.05) # only checks all 0.05 s after a new file to save performance
             current_time = os.path.getmtime(columnInputName)
             if current_time != original_time:
                 break
@@ -281,6 +280,7 @@ elif sys.argv[1] == "gui":
         global player_name_1, player_name_2
         while True:
             detect_column_input_file_change()
+            check_reset()
             with open('game_data.json', 'r') as json_file:
                 game_data = json.load(json_file)
                 player_name_1 = (game_data["player_name_1"])
@@ -293,6 +293,17 @@ elif sys.argv[1] == "gui":
                 else:
                     place_stone(column_index, stone)
                     break
+
+
+    def check_reset():
+        with open('game_data.json', 'r') as json_file:
+            game_data = json.load(json_file)
+            if game_data["reset_game"]:
+                with open("game_data.json", "w") as json_file:
+                    game_data = reset_game_data()
+                    set_game_data(game_data)
+                    json.dump(game_data, json_file, indent=4)
+
 
 
     while True:
@@ -321,7 +332,6 @@ elif sys.argv[1] == "gui":
                 game_data = reset_game_data()
                 set_game_data(game_data)
                 json.dump(game_data, json_file, indent=4)
-
 
 
 
