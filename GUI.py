@@ -5,7 +5,6 @@ from tkinter import *
 from tkinter import ttk
 import json
 from tkinter import messagebox
-import os
 import time
 import game_values as gv
 from game_values import HIGHSCORE_ARRAY, PLAYER_DATA, SCORE_DATA
@@ -74,12 +73,15 @@ def reset_game_data():
         for column in range(7):
             play_board[row][column] = Button(frame, text="", width=7, height=3, bd=3, relief=SUNKEN, bg="blue")
             play_board[row][column].grid(row=row, column=column)
+
     with open('game_data.json', 'r') as file:
         game_data = json.load(file)
-        gv.current_player_index = 1
-        gv.play_board = [[gv.EMPTY_FIELD] * gv.COLUMNS for i in range(gv.ROWS)] # game_data wird nicht gelöscht????
-        with open('game_data.json', 'w') as file:
-            json.dump(game_data, file, indent=4)
+        game_data["reset_game"] = True
+        game_data["play_board"] = [[gv.EMPTY_FIELD] * gv.COLUMNS for i in range(gv.ROWS)]
+
+    with open('game_data.json', 'w') as file:
+        json.dump(game_data, file, indent=4)
+        file.flush()
 
 
 def goto_game():
@@ -204,6 +206,7 @@ def click(num,frame):
     refresh_board(frame)
 
 
+
 def refresh_board(frame):
     time.sleep(0.05)
     with open('game_data.json', 'r') as f:
@@ -292,7 +295,7 @@ def update_highscore_frame():
 
     row = 1
     for person in highscore[HIGHSCORE_ARRAY]:
-        if row < 6:
+        if row < 12:
             Label(frame2, text=person[PLAYER_DATA],font=("Consolas",12),
                   width=20,bg="blue",fg="yellow").grid(row=row,column=0)
         row += 1
@@ -300,7 +303,7 @@ def update_highscore_frame():
 
     row = 1
     for person in highscore[HIGHSCORE_ARRAY]:
-        if row < 6:
+        if row < 12:
             Label(frame2, text=person[SCORE_DATA],font=("Consolas",12),
                   width=20,bg="blue",fg="yellow").grid(row=row,column=1)
         row +=1
@@ -308,13 +311,13 @@ def update_highscore_frame():
 
     frame2.pack()
 
-frame2.after(1000)
 
 # switch between tabs with the buttons and exit button
 def playernametab():
     notebook.select(tab1)
 
 def highscoretab():
+    update_highscore_frame()
     notebook.select(tab3)
 
 def gametab():
@@ -343,10 +346,3 @@ button_quit.place(x=517, y=655)
 
 window.mainloop()
 
-
-# zur Namenseingabe zurück x
-# erneut das spiel starten x Spielbrett neu laden x
-# spiel Gewonnen anzeigen X
-
-# die cache wird nicht zurückgesetzt beim reset play board button
-# update highscore label_______
